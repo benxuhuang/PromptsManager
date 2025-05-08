@@ -67,6 +67,8 @@ export default defineComponent({
     const currentPrompt = ref<Prompt | null>(null)
     const isDarkMode = ref(false)
 
+    store.loadPrompts()
+
     const filteredPrompts = computed(() => {
       return store.prompts.filter(prompt => 
         prompt.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -156,4 +158,4 @@ export default defineComponent({
   background-color: #0b5ed7;
   border-color: #0a58ca;
 }
-</style> 
+</style>
