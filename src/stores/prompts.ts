@@ -26,7 +26,7 @@ export const usePromptsStore = defineStore('prompts', {
         updatedAt: new Date().toISOString()
       }
       this.prompts.push(prompt)
-      this.saveToLocalStorage()
+      this.saveToLocalStorage() // Pdd8e
     },
 
     updatePrompt(promptData: Prompt) {
@@ -36,7 +36,7 @@ export const usePromptsStore = defineStore('prompts', {
           ...promptData,
           updatedAt: new Date().toISOString()
         }
-        this.saveToLocalStorage()
+        this.saveToLocalStorage() // P5970
       }
     },
 
@@ -44,8 +44,8 @@ export const usePromptsStore = defineStore('prompts', {
       const index = this.prompts.findIndex(p => p.id === id)
       if (index !== -1) {
         this.prompts.splice(index, 1)
-        this.saveToLocalStorage()
+        this.saveToLocalStorage() // P3303
       }
     }
   }
-}) 
+})
