@@ -6,7 +6,7 @@
           <th>標題</th>
           <th>類別</th>
           <th>更新時間</th>
-          <th>操作</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
