@@ -92,6 +92,12 @@ export default defineComponent({
           category: props.prompt.category,
           content: props.prompt.content
         }
+      } else {
+        form.value = {
+          title: '',
+          category: '',
+          content: '\n`text`'
+        }
       }
     })
 

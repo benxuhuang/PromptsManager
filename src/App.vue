@@ -18,6 +18,7 @@
               class="form-control" 
               placeholder="搜尋提示詞..."
               v-model="searchQuery"
+              @keydown.esc.prevent
             >
             <span class="input-group-text">
               <font-awesome-icon icon="search" />

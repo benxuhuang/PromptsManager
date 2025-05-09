@@ -9,7 +9,7 @@
             更新時間
             <font-awesome-icon :icon="sortOrder === 'asc' ? 'sort-up' : 'sort-down'" class="ms-1" />
           </th>
-          <th></th>
+          <th>操作</th>
         </tr>
       </thead>
       <tbody>
@@ -29,6 +29,9 @@
             </button>
             <button class="btn btn-sm btn-outline-success me-2" @click="previewContent(prompt.content)">
               <font-awesome-icon icon="eye" /> 預覽
+            </button>
+            <button class="btn btn-sm btn-outline-success me-2" @click="openTemplateModal(prompt.content)">
+              <font-awesome-icon icon="pen-to-square" /> 填入模板
             </button>
             <button class="btn btn-sm btn-outline-primary me-2" @click="$emit('edit', prompt)">
               <font-awesome-icon icon="edit" /> 編輯
@@ -58,6 +61,14 @@
         <div class="modal-body">
           <pre class="preview-content">{{ previewText }}</pre>
         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="showPreview = false">
+            關閉
+          </button>
+          <button type="button" class="btn btn-primary" @click="copyContent(previewText)">
+            <font-awesome-icon icon="copy" /> 複製
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -70,14 +81,25 @@
       </div>
     </div>
   </div>
+
+  <!-- 模板 Modal -->
+  <TemplateModal
+    v-if="showTemplateModal"
+    :template="templateContent"
+    @close="showTemplateModal = false"
+  />
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import type { Prompt } from '../types/prompt'
+import TemplateModal from './TemplateModal.vue'
 
 export default defineComponent({
   name: 'PromptList',
+  components: {
+    TemplateModal
+  },
   props: {
     prompts: {
       type: Array as () => Prompt[],
@@ -93,6 +115,8 @@ export default defineComponent({
     const showPreview = ref(false)
     const previewText = ref('')
     const showToast = ref(false)
+    const showTemplateModal = ref(false)
+    const templateContent = ref('')
 
     const formatDate = (dateString: string) => {
       return new Date(dateString).toLocaleString('zh-TW')
@@ -115,13 +139,21 @@ export default defineComponent({
       showPreview.value = true
     }
 
+    const openTemplateModal = (content: string) => {
+      templateContent.value = content
+      showTemplateModal.value = true
+    }
+
     return {
       formatDate,
       copyContent,
       previewContent,
       showPreview,
       previewText,
-      showToast
+      showToast,
+      showTemplateModal,
+      templateContent,
+      openTemplateModal
     }
   }
 })
