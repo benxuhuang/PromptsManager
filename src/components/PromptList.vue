@@ -24,9 +24,9 @@
           </td>
           <td class="column-updated-at">{{ formatDate(prompt.updatedAt) }}</td>
           <td class="action-buttons">
-            <button class="btn btn-sm btn-outline-success me-2" @click="copyContent(prompt.content)">
+            <!-- <button class="btn btn-sm btn-outline-success me-2" @click="copyContent(prompt.content)">
               <font-awesome-icon icon="copy" /> 複製
-            </button>
+            </button> -->
             <button class="btn btn-sm btn-outline-success me-2" @click="previewContent(prompt.content)">
               <font-awesome-icon icon="eye" /> 預覽
             </button>
@@ -164,24 +164,33 @@ export default defineComponent({
   margin-bottom: 0;
 }
 
+/* 柔和灰黑色主題 */
 .dark-mode .table {
-  color: #e0e0e0;
+  color: #e4e6eb;
+  background-color: #23262b;
 }
-
 .dark-mode .table > :not(caption) > * > * {
-  background-color: #1a1a1a;
-  border-color: #333333;
+  background-color: #23262b;
+  border-color: #353941;
+  color: #e4e6eb;
 }
-
+.dark-mode thead th {
+  color: #f1f1f1;
+  background-color: #23262b;
+  border-bottom: 2px solid #353941;
+}
+.dark-mode .prompt-title {
+  color: #e4e6eb !important;
+}
 .dark-mode .badge {
-  background-color: #2c5282 !important;
+  background-color: #3b82f6 !important;
+  color: #fff;
 }
 
 @media (max-width: 768px) {
   .table td {
     white-space: normal;
   }
-  
   .btn-sm {
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
@@ -214,8 +223,8 @@ export default defineComponent({
 }
 
 .dark-mode .preview-content {
-  background-color: #2d2d2d;
-  color: #ffffff;
+  background-color: #23262b;
+  color: #e4e6eb;
 }
 
 .toast {
@@ -224,12 +233,12 @@ export default defineComponent({
 }
 
 .dark-mode .modal-content {
-  background-color: #2d2d2d;
-  color: #ffffff;
+  background-color: #23262b;
+  color: #e4e6eb;
 }
 
 .dark-mode .modal-header {
-  border-bottom-color: #404040;
+  border-bottom-color: #353941;
 }
 
 .dark-mode .btn-close {
@@ -238,7 +247,7 @@ export default defineComponent({
 
 .prompt-title {
   word-break: break-all;
-  max-width: 200px;
+  max-width: 330px;
 }
 .action-buttons {
   display: flex;
