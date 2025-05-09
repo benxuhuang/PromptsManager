@@ -110,11 +110,16 @@ export default defineComponent({
     const searchQuery = ref('')
     const showModal = ref(false)
     const currentPrompt = ref<Prompt | null>(null)
-    const isDarkMode = ref(false)
+    const isDarkMode = ref(localStorage.getItem('darkMode') === 'true')
     const currentPage = ref(1)
     const pageSize = 10
     const selectedCategory = ref<string | null>(null)
     const fileInput = ref<HTMLInputElement | null>(null)
+
+    // 初始化暗黑模式
+    if (isDarkMode.value) {
+      document.body.classList.add('dark-mode')
+    }
 
     store.loadPrompts()
 
@@ -195,6 +200,7 @@ export default defineComponent({
     const toggleTheme = () => {
       isDarkMode.value = !isDarkMode.value
       document.body.classList.toggle('dark-mode')
+      localStorage.setItem('darkMode', isDarkMode.value.toString())
     }
 
     const exportPrompts = () => {

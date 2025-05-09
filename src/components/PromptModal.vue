@@ -24,8 +24,19 @@
                 class="form-control"
                 v-model="form.category"
                 placeholder="請輸入類別，多個類別請用逗號分隔"
-                required
               >
+              <div class="mt-2">
+                <div class="d-flex flex-wrap gap-2">
+                  <span 
+                    v-for="category in uniqueCategories" 
+                    :key="category"
+                    class="badge bg-primary cursor-pointer"
+                    @click="selectCategory(category)"
+                  >
+                    {{ category }}
+                  </span>
+                </div>
+              </div>
             </div>
             <div class="mb-3">
               <label class="form-label">內容</label>
@@ -64,6 +75,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import { marked } from 'marked'
 import type { Prompt } from '../types/prompt'
+import { usePromptsStore } from '../stores/prompts'
 
 export default defineComponent({
   name: 'PromptModal',
@@ -75,11 +87,32 @@ export default defineComponent({
   },
   emits: ['save', 'close'],
   setup(props, { emit }) {
+    const store = usePromptsStore()
     const form = ref({
       title: '',
       category: '',
       content: ''
     })
+
+    const uniqueCategories = computed(() => {
+      const categories = new Set<string>()
+      store.prompts.forEach(prompt => {
+        prompt.category.split(',').forEach(cat => categories.add(cat.trim()))
+      })
+      return Array.from(categories)
+    })
+
+    const selectCategory = (category: string) => {
+      if (form.value.category) {
+        const categories = form.value.category.split(',').map(cat => cat.trim())
+        if (!categories.includes(category)) {
+          categories.push(category)
+          form.value.category = categories.join(', ')
+        }
+      } else {
+        form.value.category = category
+      }
+    }
 
     const markdownPreview = computed(() => {
       return marked(form.value.content)
@@ -96,7 +129,7 @@ export default defineComponent({
         form.value = {
           title: '',
           category: '',
-          content: '\n`text`'
+          content: '\n\n`text`'
         }
       }
     })
@@ -117,7 +150,9 @@ export default defineComponent({
     return {
       form,
       markdownPreview,
-      handleSubmit
+      handleSubmit,
+      uniqueCategories,
+      selectCategory
     }
   }
 })
@@ -182,5 +217,9 @@ export default defineComponent({
   .markdown-preview {
     max-height: 200px;
   }
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style> 
