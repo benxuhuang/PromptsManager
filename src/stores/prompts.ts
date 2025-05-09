@@ -3,7 +3,8 @@ import type { Prompt, PromptFormData } from '../types/prompt'
 
 export const usePromptsStore = defineStore('prompts', {
   state: () => ({
-    prompts: [] as Prompt[]
+    prompts: [] as Prompt[],
+    sortOrder: 'desc' as 'asc' | 'desc'
   }),
 
   actions: {
@@ -79,6 +80,49 @@ export const usePromptsStore = defineStore('prompts', {
       } else {
         console.warn('Prompt not found:', id)
       }
+    },
+
+    exportPrompts() {
+      const exportData = {
+        version: '1.0',
+        exportDate: new Date().toISOString(),
+        prompts: this.prompts
+      }
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `prompts-export-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    },
+
+    importPrompts(file: File): Promise<void> {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target?.result as string)
+            if (data.version && data.prompts && Array.isArray(data.prompts)) {
+              this.prompts = data.prompts
+              this.saveToLocalStorage()
+              resolve()
+            } else {
+              reject(new Error('無效的匯入檔案格式'))
+            }
+          } catch (error) {
+            reject(error)
+          }
+        }
+        reader.onerror = () => reject(new Error('讀取檔案失敗'))
+        reader.readAsText(file)
+      })
+    },
+
+    toggleSortOrder() {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
     }
   }
 })

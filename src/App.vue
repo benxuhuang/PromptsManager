@@ -28,6 +28,19 @@
           <button class="btn btn-primary" @click="openCreateModal">
             <font-awesome-icon icon="plus" /> 新增提示詞
           </button>
+          <button class="btn btn-secondary ms-2" @click="exportPrompts">
+            <font-awesome-icon icon="file-export" /> 匯出
+          </button>
+          <button class="btn btn-secondary ms-2" @click="triggerImport">
+            <font-awesome-icon icon="file-import" /> 匯入
+          </button>
+          <input
+            type="file"
+            ref="fileInput"
+            accept=".json"
+            style="display: none"
+            @change="handleFileImport"
+          >
         </div>
       </div>
 
@@ -48,8 +61,10 @@
 
       <PromptList 
         :prompts="paginatedPrompts"
+        :sort-order="store.sortOrder"
         @edit="editPrompt"
         @delete="deletePrompt"
+        @toggle-sort="store.toggleSortOrder"
       />
 
       <!-- 分頁控制 -->
@@ -98,6 +113,7 @@ export default defineComponent({
     const currentPage = ref(1)
     const pageSize = 10
     const selectedCategory = ref<string | null>(null)
+    const fileInput = ref<HTMLInputElement | null>(null)
 
     store.loadPrompts()
 
@@ -107,7 +123,11 @@ export default defineComponent({
           prompt.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
           prompt.category.toLowerCase().includes(searchQuery.value.toLowerCase())
         )
-        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        .sort((a, b) => {
+          const dateA = new Date(a.updatedAt).getTime()
+          const dateB = new Date(b.updatedAt).getTime()
+          return store.sortOrder === 'asc' ? dateA - dateB : dateB - dateA
+        })
 
       if (selectedCategory.value) {
         filtered = filtered.filter(prompt => 
@@ -176,6 +196,28 @@ export default defineComponent({
       document.body.classList.toggle('dark-mode')
     }
 
+    const exportPrompts = () => {
+      store.exportPrompts()
+    }
+
+    const triggerImport = () => {
+      fileInput.value?.click()
+    }
+
+    const handleFileImport = async (event: Event) => {
+      const input = event.target as HTMLInputElement
+      if (input.files && input.files.length > 0) {
+        try {
+          await store.importPrompts(input.files[0])
+          alert('匯入成功！')
+        } catch (error) {
+          alert(`匯入失敗：${error instanceof Error ? error.message : '未知錯誤'}`)
+        }
+        // 重置檔案輸入
+        input.value = ''
+      }
+    }
+
     return {
       searchQuery,
       showModal,
@@ -193,7 +235,12 @@ export default defineComponent({
       savePrompt,
       deletePrompt,
       closeModal,
-      toggleTheme
+      toggleTheme,
+      fileInput,
+      exportPrompts,
+      triggerImport,
+      handleFileImport,
+      store
     }
   }
 })
@@ -244,5 +291,27 @@ export default defineComponent({
   background-color: #1a1a1a;
   border-color: #404040;
   color: #666666;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+
+.dark-mode .btn-success {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.dark-mode .btn-info {
+  background-color: #138496;
+  border-color: #117a8b;
 }
 </style>

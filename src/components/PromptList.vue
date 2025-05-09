@@ -5,7 +5,10 @@
         <tr>
           <th>標題</th>
           <th>類別</th>
-          <th>更新時間</th>
+          <th class="cursor-pointer" @click="$emit('toggle-sort')">
+            更新時間
+            <font-awesome-icon :icon="sortOrder === 'asc' ? 'sort-up' : 'sort-down'" class="ms-1" />
+          </th>
           <th></th>
         </tr>
       </thead>
@@ -79,9 +82,13 @@ export default defineComponent({
     prompts: {
       type: Array as () => Prompt[],
       required: true
+    },
+    sortOrder: {
+      type: String as () => 'asc' | 'desc',
+      required: true
     }
   },
-  emits: ['edit', 'delete'],
+  emits: ['edit', 'delete', 'toggle-sort'],
   setup() {
     const showPreview = ref(false)
     const previewText = ref('')
