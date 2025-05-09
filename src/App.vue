@@ -10,7 +10,7 @@
     </nav>
 
     <div class="container mt-4">
-      <div class="row mb-4">
+      <div class="row mb-4 search-row">
         <div class="col">
           <div class="input-group">
             <input 
@@ -314,5 +314,27 @@ export default defineComponent({
 .dark-mode .btn-info {
   background-color: #138496;
   border-color: #117a8b;
+}
+
+@media (max-width: 768px) {
+  .search-row {
+    flex-direction: column !important;
+    gap: 0.5rem;
+  }
+  .search-row > .col,
+  .search-row > .col-auto {
+    width: 100%;
+    max-width: 100%;
+  }
+  .search-row .input-group {
+    width: 100%;
+  }
+  .search-row .btn {
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+  .search-row .btn + .btn {
+    margin-left: 0 !important;
+  }
 }
 </style>

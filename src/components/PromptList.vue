@@ -5,7 +5,7 @@
         <tr>
           <th>標題</th>
           <th>類別</th>
-          <th class="cursor-pointer" @click="$emit('toggle-sort')">
+          <th class="cursor-pointer column-updated-at" @click="$emit('toggle-sort')">
             更新時間
             <font-awesome-icon :icon="sortOrder === 'asc' ? 'sort-up' : 'sort-down'" class="ms-1" />
           </th>
@@ -14,7 +14,7 @@
       </thead>
       <tbody>
         <tr v-for="prompt in prompts" :key="prompt.id">
-          <td>{{ prompt.title }}</td>
+          <td :class="['prompt-title']">{{ prompt.title }}</td>
           <td>
             <div class="d-flex flex-wrap gap-1">
               <span v-for="cat in prompt.category.split(',')" :key="cat" class="badge bg-primary">
@@ -22,8 +22,8 @@
               </span>
             </div>
           </td>
-          <td>{{ formatDate(prompt.updatedAt) }}</td>
-          <td>
+          <td class="column-updated-at">{{ formatDate(prompt.updatedAt) }}</td>
+          <td class="action-buttons">
             <button class="btn btn-sm btn-outline-success me-2" @click="copyContent(prompt.content)">
               <font-awesome-icon icon="copy" /> 複製
             </button>
@@ -186,6 +186,17 @@ export default defineComponent({
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
   }
+  .column-updated-at {
+    display: none !important;
+  }
+  .prompt-title {
+    max-width: 100px;
+    font-size: 0.95rem;
+  }
+  .action-buttons {
+    flex-direction: row;
+    gap: 0.15rem;
+  }
 }
 
 .modal {
@@ -223,5 +234,15 @@ export default defineComponent({
 
 .dark-mode .btn-close {
   filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.prompt-title {
+  word-break: break-all;
+  max-width: 200px;
+}
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 </style> 
