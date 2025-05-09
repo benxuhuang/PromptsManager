@@ -148,4 +148,10 @@ export default defineComponent({
   background-color: #28a745;
   color: white;
 }
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: #fff !important;
+  opacity: 1;
+}
 </style> 

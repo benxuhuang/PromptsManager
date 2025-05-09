@@ -4,7 +4,7 @@
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Prompts Manager</a>
         <button class="btn" @click="toggleTheme">
-          <font-awesome-icon :icon="isDarkMode ? 'sun' : 'moon'" />
+          <font-awesome-icon :icon="isDarkMode ? 'sun' : 'moon'" class="theme-icon" />
         </button>
       </div>
     </nav>
@@ -48,6 +48,13 @@
       <!-- 類別過濾 -->
       <div class="mb-3">
         <div class="d-flex flex-wrap gap-2">
+          <span 
+            class="badge bg-secondary cursor-pointer"
+            :class="{ 'bg-primary': selectedCategory === null }"
+            @click="toggleCategory(null)"
+          >
+            全部
+          </span>
           <span 
             v-for="category in uniqueCategories" 
             :key="category"
@@ -162,7 +169,7 @@ export default defineComponent({
       return filteredPrompts.value.slice(start, end)
     })
 
-    const toggleCategory = (category: string) => {
+    const toggleCategory = (category: string | null) => {
       selectedCategory.value = selectedCategory.value === category ? null : category
       currentPage.value = 1
     }
@@ -400,5 +407,14 @@ export default defineComponent({
   .search-row .btn + .btn {
     margin-left: 0 !important;
   }
+}
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: #fff !important;
+  opacity: 1;
+}
+.dark-mode .theme-icon {
+  color: #fff !important;
 }
 </style>

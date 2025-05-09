@@ -3,13 +3,13 @@
     <table class="table">
       <thead>
         <tr>
-          <th>標題</th>
-          <th>類別</th>
-          <th class="cursor-pointer column-updated-at" @click="$emit('toggle-sort')">
+          <th class="col-title">標題</th>
+          <th class="col-category">類別</th>
+          <th class="cursor-pointer column-updated-at col-updated-at" @click="$emit('toggle-sort')">
             更新時間
             <font-awesome-icon :icon="sortOrder === 'asc' ? 'sort-up' : 'sort-down'" class="ms-1" />
           </th>
-          <th>操作</th>
+          <th class="col-action">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -59,7 +59,7 @@
           <button type="button" class="btn-close" @click="showPreview = false"></button>
         </div>
         <div class="modal-body">
-          <pre class="preview-content">{{ previewText }}</pre>
+          <div class="preview-content markdown-preview" v-html="markdownPreview(previewText)"></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="showPreview = false">
@@ -94,6 +94,7 @@
 import { defineComponent, ref } from 'vue'
 import type { Prompt } from '../types/prompt'
 import TemplateModal from './TemplateModal.vue'
+import { marked } from 'marked'
 
 export default defineComponent({
   name: 'PromptList',
@@ -139,6 +140,10 @@ export default defineComponent({
       showPreview.value = true
     }
 
+    const markdownPreview = (content: string) => {
+      return marked(content)
+    }
+
     const openTemplateModal = (content: string) => {
       templateContent.value = content
       showTemplateModal.value = true
@@ -153,7 +158,8 @@ export default defineComponent({
       showToast,
       showTemplateModal,
       templateContent,
-      openTemplateModal
+      openTemplateModal,
+      markdownPreview
     }
   }
 })
@@ -206,6 +212,11 @@ export default defineComponent({
     flex-direction: row;
     gap: 0.15rem;
   }
+  .col-title, .col-category, .col-updated-at, .col-action {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
 }
 
 .modal {
@@ -253,5 +264,27 @@ export default defineComponent({
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
+}
+.col-title {
+  width: 180px;
+  min-width: 120px;
+  max-width: 220px;
+  word-break: break-all;
+}
+.col-category {
+  width: 120px;
+  min-width: 80px;
+  max-width: 160px;
+  word-break: break-all;
+}
+.col-updated-at {
+  width: 140px;
+  min-width: 100px;
+  max-width: 180px;
+}
+.col-action {
+  width: 180px;
+  min-width: 120px;
+  max-width: 220px;
 }
 </style> 

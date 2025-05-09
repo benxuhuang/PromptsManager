@@ -208,6 +208,12 @@ export default defineComponent({
   filter: invert(1) grayscale(100%) brightness(200%);
 }
 
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: #fff !important;
+  opacity: 1;
+}
+
 @media (max-width: 768px) {
   .modal-dialog {
     margin: 0.5rem;
