@@ -92,7 +92,9 @@ export const usePromptsStore = defineStore('prompts', {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `prompts-export-${new Date().toISOString().split('T')[0]}.json`
+      const date = new Date()
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}_${String(date.getHours()).padStart(2, '0')}-${String(date.getMinutes()).padStart(2, '0')}-${String(date.getSeconds()).padStart(2, '0')}`
+      a.download = `prompts-export-${formattedDate}.json`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -106,7 +108,22 @@ export const usePromptsStore = defineStore('prompts', {
           try {
             const data = JSON.parse(e.target?.result as string)
             if (data.version && data.prompts && Array.isArray(data.prompts)) {
-              this.prompts = data.prompts
+              // 比對現有資料並更新
+              const existingPrompts = new Map(this.prompts.map((p: Prompt) => [p.id, p]))
+              const importedPrompts = new Map(data.prompts.map((p: Prompt) => [p.id, p]))
+              
+              // 更新或新增匯入的提示詞
+              data.prompts.forEach((importedPrompt: Prompt) => {
+                const existingPrompt = existingPrompts.get(importedPrompt.id)
+                if (existingPrompt) {
+                  // 如果存在相同 ID 的提示詞，更新它
+                  this.updatePrompt(importedPrompt)
+                } else {
+                  // 如果是新的提示詞，新增它
+                  this.prompts.push(importedPrompt)
+                }
+              })
+              
               this.saveToLocalStorage()
               resolve()
             } else {
