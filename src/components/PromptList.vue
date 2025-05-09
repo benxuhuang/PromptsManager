@@ -5,11 +5,11 @@
         <tr>
           <th class="col-title">標題</th>
           <th class="col-category">類別</th>
+          <th class="col-action">操作</th>
           <th class="cursor-pointer column-updated-at col-updated-at" @click="$emit('toggle-sort')">
             更新時間
             <font-awesome-icon :icon="sortOrder === 'asc' ? 'sort-up' : 'sort-down'" class="ms-1" />
           </th>
-          <th class="col-action">操作</th>
         </tr>
       </thead>
       <tbody>
@@ -22,24 +22,24 @@
               </span>
             </div>
           </td>
-          <td class="column-updated-at">{{ formatDate(prompt.updatedAt) }}</td>
           <td class="action-buttons">
             <!-- <button class="btn btn-sm btn-outline-success me-2" @click="copyContent(prompt.content)">
               <font-awesome-icon icon="copy" /> 複製
             </button> -->
-            <button class="btn btn-sm btn-outline-success me-2" @click="previewContent(prompt.content)">
+            <button class="btn btn-sm btn-outline-secondary me-2" @click="previewContent(prompt.content)">
               <font-awesome-icon icon="eye" /> 預覽
             </button>
-            <button class="btn btn-sm btn-outline-success me-2" @click="openTemplateModal(prompt.content)">
+            <button class="btn btn-sm btn-outline-secondary me-2" @click="openTemplateModal(prompt.content)">
               <font-awesome-icon icon="pen-to-square" /> 填入模板
             </button>
-            <button class="btn btn-sm btn-outline-primary me-2" @click="$emit('edit', prompt)">
+            <button class="btn btn-sm btn-outline-secondary me-2" @click="$emit('edit', prompt)">
               <font-awesome-icon icon="edit" /> 編輯
             </button>
-            <button class="btn btn-sm btn-outline-danger" @click="$emit('delete', prompt.id)">
+            <button class="btn btn-sm btn-outline-secondary" @click="$emit('delete', prompt.id)">
               <font-awesome-icon icon="trash" /> 刪除
             </button>
           </td>
+          <td class="column-updated-at">{{ formatDate(prompt.updatedAt) }}</td>
         </tr>
         <tr v-if="prompts.length === 0">
           <td colspan="4" class="text-center">
@@ -266,19 +266,19 @@ export default defineComponent({
   gap: 0.25rem;
 }
 .col-title {
-  width: 180px;
+  width: 160px;
   min-width: 120px;
   max-width: 220px;
   word-break: break-all;
 }
 .col-category {
-  width: 120px;
+  width: 110px;
   min-width: 80px;
   max-width: 160px;
   word-break: break-all;
 }
 .col-updated-at {
-  width: 140px;
+  width: 100px;
   min-width: 100px;
   max-width: 180px;
 }
