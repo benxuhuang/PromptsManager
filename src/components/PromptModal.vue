@@ -23,26 +23,24 @@
                 type="text"
                 class="form-control"
                 v-model="form.category"
+                placeholder="請輸入類別，多個類別請用逗號分隔"
                 required
               >
             </div>
             <div class="mb-3">
               <label class="form-label">內容</label>
-              <div class="d-flex gap-3">
-                <div class="flex-grow-1">
-                  <textarea
-                    class="form-control font-monospace"
-                    v-model="form.content"
-                    rows="10"
-                    required
-                  ></textarea>
+              <textarea
+                class="form-control font-monospace mb-3"
+                v-model="form.content"
+                rows="10"
+                required
+              ></textarea>
+              <div class="card">
+                <div class="card-header">
+                  預覽
                 </div>
-                <div class="flex-grow-1">
-                  <div class="card h-100">
-                    <div class="card-body markdown-preview">
-                      <div v-html="markdownPreview"></div>
-                    </div>
-                  </div>
+                <div class="card-body markdown-preview">
+                  <div v-html="markdownPreview"></div>
                 </div>
               </div>
             </div>
@@ -126,33 +124,57 @@ export default defineComponent({
 
 .markdown-preview {
   overflow-y: auto;
+  max-height: 300px;
 }
 
 .dark-mode .modal-content {
-  background-color: #2d2d2d;
-  color: #ffffff;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
 }
 
 .dark-mode .modal-header {
-  border-bottom-color: #404040;
+  border-bottom-color: #333333;
 }
 
 .dark-mode .modal-footer {
-  border-top-color: #404040;
+  border-top-color: #333333;
 }
 
 .dark-mode .form-control {
-  background-color: #1a1a1a;
+  background-color: #2d2d2d;
   border-color: #404040;
-  color: #ffffff;
+  color: #e0e0e0;
+}
+
+.dark-mode .form-control:focus {
+  background-color: #2d2d2d;
+  border-color: #4a4a4a;
+  color: #e0e0e0;
 }
 
 .dark-mode .card {
-  background-color: #1a1a1a;
+  background-color: #2d2d2d;
   border-color: #404040;
+}
+
+.dark-mode .card-header {
+  background-color: #333333;
+  border-bottom-color: #404040;
+  color: #e0e0e0;
 }
 
 .dark-mode .btn-close {
   filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+@media (max-width: 768px) {
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+
+  .markdown-preview {
+    max-height: 200px;
+  }
 }
 </style> 

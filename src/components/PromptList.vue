@@ -12,9 +12,18 @@
       <tbody>
         <tr v-for="prompt in prompts" :key="prompt.id">
           <td>{{ prompt.title }}</td>
-          <td>{{ prompt.category }}</td>
+          <td>
+            <div class="d-flex flex-wrap gap-1">
+              <span v-for="cat in prompt.category.split(',')" :key="cat" class="badge bg-primary">
+                {{ cat.trim() }}
+              </span>
+            </div>
+          </td>
           <td>{{ formatDate(prompt.updatedAt) }}</td>
           <td>
+            <button class="btn btn-sm btn-outline-success me-2" @click="copyContent(prompt.content)">
+              <font-awesome-icon icon="copy" /> 複製
+            </button>
             <button class="btn btn-sm btn-outline-primary me-2" @click="$emit('edit', prompt)">
               <font-awesome-icon icon="edit" /> 編輯
             </button>
@@ -51,8 +60,19 @@ export default defineComponent({
       return new Date(dateString).toLocaleString('zh-TW')
     }
 
+    const copyContent = async (content: string) => {
+      try {
+        await navigator.clipboard.writeText(content)
+        alert('已複製到剪貼簿')
+      } catch (err) {
+        console.error('複製失敗:', err)
+        alert('複製失敗')
+      }
+    }
+
     return {
-      formatDate
+      formatDate,
+      copyContent
     }
   }
 })
@@ -64,11 +84,26 @@ export default defineComponent({
 }
 
 .dark-mode .table {
-  color: #ffffff;
+  color: #e0e0e0;
 }
 
 .dark-mode .table > :not(caption) > * > * {
-  background-color: #2d2d2d;
-  border-color: #404040;
+  background-color: #1a1a1a;
+  border-color: #333333;
+}
+
+.dark-mode .badge {
+  background-color: #2c5282 !important;
+}
+
+@media (max-width: 768px) {
+  .table td {
+    white-space: normal;
+  }
+  
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
 }
 </style> 
