@@ -31,11 +31,40 @@
         </div>
       </div>
 
+      <!-- 類別過濾 -->
+      <div class="mb-3">
+        <div class="d-flex flex-wrap gap-2">
+          <span 
+            v-for="category in uniqueCategories" 
+            :key="category"
+            class="badge bg-primary cursor-pointer"
+            :class="{ 'bg-primary': selectedCategory === category }"
+            @click="toggleCategory(category)"
+          >
+            {{ category }}
+          </span>
+        </div>
+      </div>
+
       <PromptList 
-        :prompts="filteredPrompts"
+        :prompts="paginatedPrompts"
         @edit="editPrompt"
         @delete="deletePrompt"
       />
+
+      <!-- 分頁控制 -->
+      <div class="d-flex justify-content-center mt-4">
+        <nav>
+          <ul class="pagination">
+            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+              <a class="page-link" href="#" @click.prevent="currentPage--">上一頁</a>
+            </li>
+            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+              <a class="page-link" href="#" @click.prevent="currentPage++">下一頁</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
 
     <PromptModal
@@ -66,15 +95,51 @@ export default defineComponent({
     const showModal = ref(false)
     const currentPrompt = ref<Prompt | null>(null)
     const isDarkMode = ref(false)
+    const currentPage = ref(1)
+    const pageSize = 10
+    const selectedCategory = ref<string | null>(null)
 
     store.loadPrompts()
 
     const filteredPrompts = computed(() => {
-      return store.prompts.filter(prompt => 
-        prompt.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        prompt.category.toLowerCase().includes(searchQuery.value.toLowerCase())
-      )
+      let filtered = store.prompts
+        .filter(prompt => 
+          prompt.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+          prompt.category.toLowerCase().includes(searchQuery.value.toLowerCase())
+        )
+        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+
+      if (selectedCategory.value) {
+        filtered = filtered.filter(prompt => 
+          prompt.category.split(',').map(cat => cat.trim()).includes(selectedCategory.value!)
+        )
+      }
+
+      return filtered
     })
+
+    const uniqueCategories = computed(() => {
+      const categories = new Set<string>()
+      store.prompts.forEach(prompt => {
+        prompt.category.split(',').forEach(cat => categories.add(cat.trim()))
+      })
+      return Array.from(categories)
+    })
+
+    const totalPages = computed(() => 
+      Math.ceil(filteredPrompts.value.length / pageSize)
+    )
+
+    const paginatedPrompts = computed(() => {
+      const start = (currentPage.value - 1) * pageSize
+      const end = start + pageSize
+      return filteredPrompts.value.slice(start, end)
+    })
+
+    const toggleCategory = (category: string) => {
+      selectedCategory.value = selectedCategory.value === category ? null : category
+      currentPage.value = 1
+    }
 
     const openCreateModal = () => {
       currentPrompt.value = null
@@ -117,6 +182,12 @@ export default defineComponent({
       currentPrompt,
       isDarkMode,
       filteredPrompts,
+      paginatedPrompts,
+      currentPage,
+      totalPages,
+      uniqueCategories,
+      selectedCategory,
+      toggleCategory,
       openCreateModal,
       editPrompt,
       savePrompt,
@@ -157,5 +228,21 @@ export default defineComponent({
 .dark-mode .btn-primary:hover {
   background-color: #0b5ed7;
   border-color: #0a58ca;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.dark-mode .pagination .page-link {
+  background-color: #2d2d2d;
+  border-color: #404040;
+  color: #ffffff;
+}
+
+.dark-mode .pagination .page-item.disabled .page-link {
+  background-color: #1a1a1a;
+  border-color: #404040;
+  color: #666666;
 }
 </style>

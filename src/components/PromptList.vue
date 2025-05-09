@@ -24,6 +24,9 @@
             <button class="btn btn-sm btn-outline-success me-2" @click="copyContent(prompt.content)">
               <font-awesome-icon icon="copy" /> 複製
             </button>
+            <button class="btn btn-sm btn-outline-success me-2" @click="previewContent(prompt.content)">
+              <font-awesome-icon icon="eye" /> 預覽
+            </button>
             <button class="btn btn-sm btn-outline-primary me-2" @click="$emit('edit', prompt)">
               <font-awesome-icon icon="edit" /> 編輯
             </button>
@@ -40,10 +43,34 @@
       </tbody>
     </table>
   </div>
+
+  <!-- 預覽 Modal -->
+  <div class="modal fade" :class="{ show: showPreview }" tabindex="-1" style="display: block;" v-if="showPreview">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">提示詞預覽</h5>
+          <button type="button" class="btn-close" @click="showPreview = false"></button>
+        </div>
+        <div class="modal-body">
+          <pre class="preview-content">{{ previewText }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 複製成功提示 -->
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div class="toast" :class="{ show: showToast }" role="alert">
+      <div class="toast-body">
+        已複製到剪貼簿
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import type { Prompt } from '../types/prompt'
 
 export default defineComponent({
@@ -56,6 +83,10 @@ export default defineComponent({
   },
   emits: ['edit', 'delete'],
   setup() {
+    const showPreview = ref(false)
+    const previewText = ref('')
+    const showToast = ref(false)
+
     const formatDate = (dateString: string) => {
       return new Date(dateString).toLocaleString('zh-TW')
     }
@@ -63,16 +94,27 @@ export default defineComponent({
     const copyContent = async (content: string) => {
       try {
         await navigator.clipboard.writeText(content)
-        alert('已複製到剪貼簿')
+        showToast.value = true
+        setTimeout(() => {
+          showToast.value = false
+        }, 2000)
       } catch (err) {
         console.error('複製失敗:', err)
-        alert('複製失敗')
       }
+    }
+
+    const previewContent = (content: string) => {
+      previewText.value = content
+      showPreview.value = true
     }
 
     return {
       formatDate,
-      copyContent
+      copyContent,
+      previewContent,
+      showPreview,
+      previewText,
+      showToast
     }
   }
 })
@@ -105,5 +147,42 @@ export default defineComponent({
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
   }
+}
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.preview-content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 70vh;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+
+.dark-mode .preview-content {
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+.toast {
+  background-color: #28a745;
+  color: white;
+}
+
+.dark-mode .modal-content {
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+.dark-mode .modal-header {
+  border-bottom-color: #404040;
+}
+
+.dark-mode .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
 }
 </style> 
