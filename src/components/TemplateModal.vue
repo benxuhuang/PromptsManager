@@ -20,14 +20,14 @@
             <button type="button" class="btn btn-outline-success btn-sm" @click="openExternal('chatgpt')">
               ChatGPT
             </button>
+            <button type="button" class="btn btn-outline-success btn-sm" @click="openExternal('claude')">
+              Claude
+            </button>
             <button type="button" class="btn btn-outline-success btn-sm" @click="openExternal('felo')">
               Felo Search
             </button>
             <button type="button" class="btn btn-outline-success btn-sm" @click="openExternal('perplexity')">
               Perplexity
-            </button>
-            <button type="button" class="btn btn-outline-success btn-sm" @click="openExternal('claude')">
-              Claude
             </button>
           </div>
           <div class="preview-section">
