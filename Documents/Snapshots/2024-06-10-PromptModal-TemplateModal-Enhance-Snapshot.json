@@ -1,0 +1,8 @@
+{
+  "version": "2024-06-10",
+  "changes": [
+    "PromptModal 新增欄位驗證，未填標題或類別時右上角toast通知提示。",
+    "TemplateModal 新增ChatGPT、Felo、Perplexity、Claude四個外部連結按鈕，點擊自動帶入提示詞內容並URL編碼。",
+    "本Snapshot為首次建立，無前版紀錄。"
+  ]
+} 

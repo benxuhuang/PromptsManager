@@ -69,6 +69,15 @@
     </div>
   </div>
   <div class="modal-backdrop fade show"></div>
+
+  <!-- 欄位未填寫通知 -->
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div class="toast" :class="{ show: showToast }" role="alert">
+      <div class="toast-body">
+        {{ toastMessage }}
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -118,6 +127,9 @@ export default defineComponent({
       return marked(form.value.content)
     })
 
+    const showToast = ref(false)
+    const toastMessage = ref('')
+
     onMounted(() => {
       if (props.prompt) {
         form.value = {
@@ -135,6 +147,18 @@ export default defineComponent({
     })
 
     const handleSubmit = () => {
+      if (!form.value.title) {
+        showToast.value = true
+        toastMessage.value = '標題未填寫'
+        setTimeout(() => { showToast.value = false }, 2000)
+        return
+      }
+      if (!form.value.category) {
+        showToast.value = true
+        toastMessage.value = '類別未填寫'
+        setTimeout(() => { showToast.value = false }, 2000)
+        return
+      }
       if (form.value.title && form.value.category && form.value.content) {
         const promptData = {
           ...form.value
@@ -152,7 +176,9 @@ export default defineComponent({
       markdownPreview,
       handleSubmit,
       uniqueCategories,
-      selectCategory
+      selectCategory,
+      showToast,
+      toastMessage
     }
   }
 })

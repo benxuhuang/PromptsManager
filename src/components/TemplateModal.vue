@@ -16,7 +16,21 @@
               placeholder="請輸入要填入的內容..."
             ></textarea>
           </div>
-          <div class="preview-section" v-if="previewText">
+          <div class="mb-3 d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-outline-success btn-sm" @click="openExternal('chatgpt')">
+              ChatGPT
+            </button>
+            <button type="button" class="btn btn-outline-success btn-sm" @click="openExternal('felo')">
+              Felo Search
+            </button>
+            <button type="button" class="btn btn-outline-success btn-sm" @click="openExternal('perplexity')">
+              Perplexity
+            </button>
+            <button type="button" class="btn btn-outline-success btn-sm" @click="openExternal('claude')">
+              Claude
+            </button>
+          </div>
+          <div class="preview-section">
             <h6>預覽：</h6>
             <pre class="preview-content">{{ previewText }}</pre>
           </div>
@@ -61,7 +75,7 @@ export default defineComponent({
     const showToast = ref(false)
 
     const previewText = computed(() => {
-      if (!inputText.value) return ''
+      // if (!inputText.value) return ''
       
       if (props.template.includes('`text`')) {
         return props.template.replace(/`text`/g, inputText.value)
@@ -83,11 +97,32 @@ export default defineComponent({
       }
     }
 
+    const openExternal = (type: string) => {
+      let url = ''
+      const encoded = encodeURIComponent(previewText.value)
+      switch (type) {
+        case 'chatgpt':
+          url = `https://chatgpt.com/?model=gpt-4o-mini&q=${encoded}`
+          break
+        case 'felo':
+          url = `https://felo.ai/search?q=${encoded}`
+          break
+        case 'perplexity':
+          url = `https://www.perplexity.ai/search?q=${encoded}`
+          break
+        case 'claude':
+          url = `https://claude.ai/new?q=${encoded}`
+          break
+      }
+      if (url) window.open(url, '_blank')
+    }
+
     return {
       inputText,
       previewText,
       showToast,
-      handleCopy
+      handleCopy,
+      openExternal
     }
   }
 })
